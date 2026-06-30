@@ -1,15 +1,32 @@
 const Document = require("../models/Document");
-const fs = require("fs");
-const path = require("path");
+const cloudinary = require("../config/cloudinary");
 
-const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
+const streamUpload = (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "aakhyaan-foundation/documents",
+        resource_type: "raw",
+      },
+      (error, result) => {
+        if (result) resolve(result);
+        else reject(error);
+      }
+    );
+
+    stream.end(fileBuffer);
+  });
+};
 
 exports.getDocuments = async (req, res) => {
   try {
     const documents = await Document.find().sort({ createdAt: -1 });
     res.status(200).json(documents);
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch documents", error });
+    res.status(500).json({
+      message: "Failed to fetch documents",
+      error: error.message,
+    });
   }
 };
 
@@ -19,9 +36,12 @@ exports.uploadDocument = async (req, res) => {
       return res.status(400).json({ message: "PDF file is required" });
     }
 
+    const uploadedPdf = await streamUpload(req.file.buffer);
+
     const document = await Document.create({
       name: req.file.originalname,
-      file: `${BASE_URL}/uploads/documents/${req.file.filename}`,
+      file: uploadedPdf.secure_url,
+      public_id: uploadedPdf.public_id,
     });
 
     res.status(201).json({
@@ -29,7 +49,11 @@ exports.uploadDocument = async (req, res) => {
       document,
     });
   } catch (error) {
-    res.status(500).json({ message: "Failed to upload document", error });
+    console.log("UPLOAD DOCUMENT ERROR:", error);
+    res.status(500).json({
+      message: "Failed to upload document",
+      error: error.message,
+    });
   }
 };
 
@@ -41,17 +65,22 @@ exports.deleteDocument = async (req, res) => {
       return res.status(404).json({ message: "Document not found" });
     }
 
-    const fileName = document.file.split("/").pop();
-    const filePath = path.join(__dirname, "../uploads/documents", fileName);
-
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    if (document.public_id) {
+      await cloudinary.uploader.destroy(document.public_id, {
+        resource_type: "raw",
+      });
     }
 
-    await Document.findByIdAndDelete(req.params.id);
+    await document.deleteOne();
 
-    res.status(200).json({ message: "Document deleted successfully" });
+    res.status(200).json({
+      message: "Document deleted successfully",
+    });
   } catch (error) {
-    res.status(500).json({ message: "Failed to delete document", error });
+    console.log("DELETE DOCUMENT ERROR:", error);
+    res.status(500).json({
+      message: "Failed to delete document",
+      error: error.message,
+    });
   }
 };
