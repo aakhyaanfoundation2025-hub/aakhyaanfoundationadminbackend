@@ -54,6 +54,7 @@ app.use("/api/press-coverage", require("./routes/pressCoverageRoutes"));
 app.use("/api/upcoming-events", require("./routes/upcomingEventRoutes"));
 app.use("/api/documents", require("./routes/documentRoutes"));
 app.use("/api/audit-documents", require("./routes/auditDocumentRoutes"));
+app.use("/api/policy-documents", require("./routes/policyDocumentRoutes"));
 app.use("/api/donors", require("./routes/donorRoutes"));
 
 app.get("/", (req, res) => {
