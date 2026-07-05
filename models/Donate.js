@@ -2,44 +2,30 @@ const mongoose = require("mongoose");
 
 const donateSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      default: "Donate Now",
+    fullName: { type: String, required: true },
+    mobile: { type: String, required: true },
+    email: { type: String },
+    panNumber: { type: String },
+    address: { type: String, required: true },
+
+    donationAmount: { type: Number, required: true },
+
+    documentType: { type: String, required: true },
+    documentNumber: { type: String, required: true },
+
+    photo: {
+      url: String,
+      public_id: String,
     },
 
-    description: {
-      type: String,
-      default: "",
+    documentFront: {
+      url: String,
+      public_id: String,
     },
 
-    accountName: {
-      type: String,
-      default: "",
-    },
-
-    accountNumber: {
-      type: String,
-      default: "",
-    },
-
-    ifscCode: {
-      type: String,
-      default: "",
-    },
-
-    bankName: {
-      type: String,
-      default: "",
-    },
-
-    upiId: {
-      type: String,
-      default: "",
-    },
-
-    qrImage: {
-      type: String,
-      default: "",
+    documentBack: {
+      url: String,
+      public_id: String,
     },
   },
   { timestamps: true }
