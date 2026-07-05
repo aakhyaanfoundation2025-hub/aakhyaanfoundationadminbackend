@@ -19,6 +19,7 @@ const allowedOrigins = [
   // Live
   "https://aakyanfoundationbackfrontend.vercel.app",
   "https://aakhyaanfoundation.vercel.app",
+  "https://aakhyaanfoundationadminbackendfront.vercel.app",
 ];
 
 app.use(
