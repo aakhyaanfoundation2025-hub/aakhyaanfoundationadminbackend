@@ -9,8 +9,8 @@ const streamUpload = (fileBuffer, folder) => {
         resource_type: "image",
       },
       (error, result) => {
-        if (result) resolve(result);
-        else reject(error);
+        if (error) reject(error);
+        else resolve(result);
       }
     );
 
@@ -42,7 +42,14 @@ exports.createDonation = async (req, res) => {
       documentNumber,
     } = req.body;
 
-    if (!fullName || !mobile || !address || !donationAmount || !documentType || !documentNumber) {
+    if (
+      !fullName ||
+      !mobile ||
+      !address ||
+      !donationAmount ||
+      !documentType ||
+      !documentNumber
+    ) {
       return res.status(400).json({
         message: "Please fill all required fields",
       });
@@ -69,7 +76,7 @@ exports.createDonation = async (req, res) => {
       email,
       panNumber,
       address,
-      donationAmount,
+      donationAmount: Number(donationAmount),
       documentType,
       documentNumber,
       photo,
@@ -94,7 +101,10 @@ exports.getAllDonations = async (req, res) => {
   try {
     const donations = await Donate.find().sort({ createdAt: -1 });
 
-    res.status(200).json(donations);
+    res.status(200).json({
+      total: donations.length,
+      donations,
+    });
   } catch (error) {
     res.status(500).json({
       message: "Failed to fetch donations",
@@ -108,7 +118,9 @@ exports.getSingleDonation = async (req, res) => {
     const donation = await Donate.findById(req.params.id);
 
     if (!donation) {
-      return res.status(404).json({ message: "Donation not found" });
+      return res.status(404).json({
+        message: "Donation not found",
+      });
     }
 
     res.status(200).json(donation);
@@ -125,7 +137,9 @@ exports.deleteDonation = async (req, res) => {
     const donation = await Donate.findById(req.params.id);
 
     if (!donation) {
-      return res.status(404).json({ message: "Donation not found" });
+      return res.status(404).json({
+        message: "Donation not found",
+      });
     }
 
     const files = [
