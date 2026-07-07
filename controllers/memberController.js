@@ -26,6 +26,7 @@ const uploadFileToCloudinary = async (file, folder) => {
   return {
     url: uploaded.secure_url,
     public_id: uploaded.public_id,
+    resource_type: uploaded.resource_type,
   };
 };
 
@@ -70,17 +71,17 @@ exports.createMember = async (req, res) => {
 
     const profileImage = await uploadFileToCloudinary(
       req.files?.profileImage?.[0],
-      "aakhyaan-foundation/members/profile"
+      "aakhyaanfoundation/members/profile"
     );
 
     const idUpload = await uploadFileToCloudinary(
       req.files?.idUpload?.[0],
-      "aakhyaan-foundation/members/id-proof"
+      "aakhyaanfoundation/members/id-proof"
     );
 
     const otherUpload = await uploadFileToCloudinary(
       req.files?.otherUpload?.[0],
-      "aakhyaan-foundation/members/other-documents"
+      "aakhyaanfoundation/members/other-documents"
     );
 
     const member = await Member.create({
@@ -165,14 +166,16 @@ exports.deleteMember = async (req, res) => {
     }
 
     const files = [
-      member.profileImage?.public_id,
-      member.idUpload?.public_id,
-      member.otherUpload?.public_id,
+      member.profileImage,
+      member.idUpload,
+      member.otherUpload,
     ];
 
-    for (const publicId of files) {
-      if (publicId) {
-        await cloudinary.uploader.destroy(publicId);
+    for (const file of files) {
+      if (file?.public_id) {
+        await cloudinary.uploader.destroy(file.public_id, {
+          resource_type: file.resource_type || "image",
+        });
       }
     }
 

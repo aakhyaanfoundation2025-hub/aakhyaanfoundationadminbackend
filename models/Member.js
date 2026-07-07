@@ -29,16 +29,19 @@ const memberSchema = new mongoose.Schema(
     profileImage: {
       url: String,
       public_id: String,
+      resource_type: String,
     },
 
     idUpload: {
       url: String,
       public_id: String,
+      resource_type: String,
     },
 
     otherUpload: {
       url: String,
       public_id: String,
+      resource_type: String,
     },
 
     declaration: {
