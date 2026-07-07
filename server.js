@@ -57,6 +57,7 @@ app.use("/api/documents", require("./routes/documentRoutes"));
 app.use("/api/audit-documents", require("./routes/auditDocumentRoutes"));
 app.use("/api/policy-documents", require("./routes/policyDocumentRoutes"));
 app.use("/api/donors", require("./routes/donorRoutes"));
+app.use("/api/members", require("./routes/memberRoutes"));
 
 app.get("/", (req, res) => {
   res.send("Aakhyaan Foundation API is running");
