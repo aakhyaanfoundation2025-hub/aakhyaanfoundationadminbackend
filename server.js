@@ -17,6 +17,7 @@ const allowedOrigins = [
   "http://localhost:5501",
 
   // Live
+  "https://aakhyaanfoundation.org",
   "https://aakyanfoundationbackfrontend.vercel.app",
   "https://aakhyaanfoundation.vercel.app",
   "https://aakhyaanfoundationadminbackendfront.vercel.app",
